@@ -1,0 +1,3 @@
+[submodule "public/demoFlosteBabylon"]
+	path = public/demoFlosteBabylon
+	url = git@github.com:Floste/demoFlosteBabylon.git

@@ -1,0 +1,62 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=320, height=320,   
+			user-scalable=no, 
+			initial-scale=1.0,
+			maximum-scale=1.0,
+			minimum-scale=1.0"
+			>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <style>
+			@media (orientation: landscape) {
+				body {
+					-webkit-transform: rotate(90deg);
+					transform: rotate(90deg);
+				}
+			}
+        	#logMessage{
+        		padding: 15px;
+        		background: #c0c0c0;
+        		text-align: center;
+        		font-size: 2em;
+        	}
+        	#orientation{
+        		background: #333333;
+        		text-align: center;
+        		font-size: 3em;
+        		color: white;
+        		padding: 15px;
+        	}
+        </style>
+	</head>
+	<body>
+        <script>
+        	var lastEmitOrientation = new Date().getTime();
+		    $().ready(function(){
+	            var socket = io.connect(window.location.origin);
+			    socket.emit('identification', 'controller');
+			    socket.on('message', function(message) {
+			        $("#logMessage").append(message + "<br />");
+			    })
+
+				window.addEventListener('deviceorientation', function(event) {
+					var alpha = event.alpha;
+					var beta = event.beta;
+					var gamma = event.gamma;
+					alphaOrientation = Math.round(gamma/10);
+				 	betaOrientation = Math.round(beta/10);
+
+				 	if(new Date().getTime() > lastEmitOrientation + 500 ){
+						socket.emit('orientation', {'alphaOrientation':alphaOrientation,'betaOrientation':betaOrientation});
+				  		$("#orientation").html(alphaOrientation + " | " + betaOrientation);
+				  		lastEmitOrientation = new Date().getTime();
+				 	}
+				}, false);
+   		    });
+
+        </script>
+        <div id="logMessage"></div>
+        <div id="orientation"></div>
+	</body>
+</html>
